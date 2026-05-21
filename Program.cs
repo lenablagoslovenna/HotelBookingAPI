@@ -12,9 +12,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// EF Core + SQL Server
+// EF Core + MySQL
+var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<HotelsDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseMySql(connStr, ServerVersion.AutoDetect(connStr)));
 
 // CORS — разрешаем мобильному сайту обращаться к API
 builder.Services.AddCors(options =>
