@@ -22,15 +22,18 @@ namespace HotelsAPI.Controllers
         }
 
         // ── POST api/auth/login ──────────────────────────────────────
-        // Тело: { "username": "guest1", "password": "1234" }
+        // Тело: { "username": "email@example.com", "password": "1234" }
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest req)
         {
+            // Ищем только по email
             var guest = await _db.Guests
-                .FirstOrDefaultAsync(g => g.Username == req.Username && g.PwdHash == req.Password);
+                .FirstOrDefaultAsync(g =>
+                    g.Email == req.Username
+                    && g.PwdHash == req.Password);
 
             if (guest == null)
-                return Unauthorized(new { message = "Неверный логин или пароль" });
+                return Unauthorized(new { message = "Неверный email или пароль" });
 
             var token = GenerateToken(guest);
             return Ok(new
@@ -53,7 +56,6 @@ namespace HotelsAPI.Controllers
             if (await _db.Guests.AnyAsync(g => g.Email == req.Email))
                 return Conflict(new { message = "Email уже зарегистрирован" });
 
-            // Генерируем следующий ID (IDENTITY в SQL Server сделает это сам, но у нас SMALLINT IDENTITY)
             var guest = new Guest
             {
                 FirstName = req.FirstName,
@@ -62,7 +64,7 @@ namespace HotelsAPI.Controllers
                 Email     = req.Email,
                 Phone     = req.Phone,
                 Username  = req.Username,
-                PwdHash   = req.Password   // В реальном проекте — хешировать!
+                PwdHash   = req.Password
             };
 
             _db.Guests.Add(guest);
