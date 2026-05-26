@@ -49,6 +49,7 @@ namespace HotelsAPI.Controllers
             guest.LastName  = dto.LastName;
             guest.Email     = dto.Email;
             guest.Phone     = dto.Phone;
+            guest.Idnp      = dto.Idnp;
 
             await _db.SaveChangesAsync();
             return Ok(new { message = "Профиль обновлён" });
@@ -81,5 +82,5 @@ namespace HotelsAPI.Controllers
         }
     }
 
-    public record GuestUpdateDto(string FirstName, string LastName, string Email, string Phone);
+    public record GuestUpdateDto(string FirstName, string LastName, string Email, string Phone, string Idnp);
 }
